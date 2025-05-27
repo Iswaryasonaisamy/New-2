@@ -47,23 +47,36 @@ def process():
         excel_file = request.files['excel']
         dxf_files = request.files.getlist('dxfs')
 
+        if not dxf_files:
+            return "No DXF files uploaded.", 400
+
         replacements = read_excel(excel_file)
 
         with tempfile.TemporaryDirectory() as tmpdir:
             updated_paths = []
             for dxf in dxf_files:
-                lines = dxf.read().decode('latin1').splitlines()
+                content = dxf.read()
+                if not content:
+                    continue
+                lines = content.decode('latin1').splitlines()
                 updated = [replace_text_advanced(line, replacements) for line in lines]
 
-                path = os.path.join(tmpdir, dxf.filename)
+                # Only keep the filename (drop folder structure)
+                file_name_only = os.path.basename(dxf.filename)
+                path = os.path.join(tmpdir, file_name_only)
+
                 with open(path, 'w', encoding='latin1', newline='') as f:
                     f.write('\r\n'.join(updated) + '\r\n')
+
                 updated_paths.append(path)
+
+            if not updated_paths:
+                return "No valid DXF files processed.", 400
 
             zip_stream = BytesIO()
             with zipfile.ZipFile(zip_stream, 'w') as zipf:
                 for path in updated_paths:
-                    zipf.write(path, os.path.basename(path))
+                    zipf.write(path, os.path.basename(path))  # add to zip without folder path
 
             zip_stream.seek(0)
             return send_file(zip_stream, mimetype='application/zip',

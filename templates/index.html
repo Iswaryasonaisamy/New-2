@@ -22,7 +22,7 @@
       document.getElementById('result').textContent = "Processing...";
 
       try {
-        const response = await fetch('https://new-2-ket0.onrender.com/process', {
+        const response = await fetch('/process', {
           method: 'POST',
           body: data
         });
