@@ -1,14 +1,14 @@
 from flask import Flask, request, send_file, render_template
+from flask_cors import CORS
 import openpyxl
 import xlrd
 import zipfile
 import os
 import tempfile
 from io import BytesIO
-from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})  # ✅ ENABLE CORS FOR ANY FRONTEND
 
 def replace_text_advanced(line, replacements):
     if line.strip() in replacements:
