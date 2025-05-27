@@ -7,8 +7,8 @@ import os
 import tempfile
 from io import BytesIO
 
-app = Flask(__name__)
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})  # ✅ ENABLE CORS FOR ANY FRONTEND
+app = Flask(__name__, template_folder="templates")
+CORS(app, resources={r"/*": {"origins": "*"}}) 
 
 def replace_text_advanced(line, replacements):
     if line.strip() in replacements:
