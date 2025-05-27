@@ -5,10 +5,10 @@
   <title>DXF Excel Processor</title>
 </head>
 <body>
-  <h2>Upload Excel & DXF files</h2>
+  <h2>Upload Excel & DXF Folder</h2>
   <form id="uploadForm">
     <label>Excel File: <input type="file" name="excel" accept=".xls,.xlsx" required></label><br><br>
-    <label>DXF Files: <input type="file" name="dxfs" accept=".dxf" multiple required></label><br><br>
+    <label>DXF Folder: <input type="file" name="dxfs" webkitdirectory directory multiple required></label><br><br>
     <button type="submit">Submit</button>
   </form>
   <div id="result"></div>
@@ -21,22 +21,26 @@
 
       document.getElementById('result').textContent = "Processing...";
 
-      const response = await fetch('/process', {
-        method: 'POST',
-        body: data
-      });
+      try {
+        const response = await fetch('https://new-2-ket0.onrender.com/process', {
+          method: 'POST',
+          body: data
+        });
 
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'updated_typical.zip';
-        a.click();
-        document.getElementById('result').textContent = "Download started.";
-      } else {
-        const text = await response.text();
-        document.getElementById('result').textContent = "Error: " + text;
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'updated_typical.zip';
+          a.click();
+          document.getElementById('result').textContent = "Download started.";
+        } else {
+          const text = await response.text();
+          document.getElementById('result').textContent = "Error: " + text;
+        }
+      } catch (err) {
+        document.getElementById('result').textContent = "Failed to upload. " + err.message;
       }
     });
   </script>

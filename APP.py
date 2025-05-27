@@ -8,7 +8,8 @@ import tempfile
 from io import BytesIO
 
 app = Flask(__name__, template_folder="templates")
-CORS(app, resources={r"/*": {"origins": "*"}}) 
+app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024  # 200 MB limit
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 def replace_text_advanced(line, replacements):
     if line.strip() in replacements:
